@@ -1,0 +1,7 @@
+{
+  "name": "鳴法奇門 - 高階數術決策系統",
+  "description": "基於清代《奇門鳴法》與《五行大義》的高階奇門遁甲決策系統，整合飛盤與轉盤雙體系，輔以真太陽時精確校正。",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

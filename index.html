@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鳴法奇門 - 高階數術決策系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mystic-gold: #d4af37;
+            --cosmic-blue: #1e293b;
+            --void-dark: #020617;
+        }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--void-dark);
+            color: #f8fafc;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(30, 41, 59, 0.5) 0%, transparent 80%),
+                url('https://www.transparenttextures.com/patterns/stardust.png');
+            background-attachment: fixed;
+        }
+        .serif {
+            font-family: 'Noto Serif TC', serif;
+        }
+        .calligraphy {
+            font-family: 'Ma Shan Zheng', cursive;
+        }
+        .qimen-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 16px;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(212, 175, 55, 0.05);
+            position: relative;
+        }
+        .qimen-grid::before {
+            content: "";
+            position: absolute;
+            inset: -4px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            border-radius: 20px;
+            pointer-events: none;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: var(--mystic-gold);
+            border-radius: 10px;
+            opacity: 0.5;
+        }
+        .mystic-border {
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            position: relative;
+        }
+        .mystic-border::after {
+            content: '卍';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--void-dark);
+            padding: 0 8px;
+            color: var(--mystic-gold);
+            font-size: 12px;
+            opacity: 0.5;
+        }
+        .glow-gold {
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+        @keyframes rotate-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-mystic-spin {
+            animation: rotate-slow 20s linear infinite;
+        }
+        .tai-ji-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vh;
+            height: 80vh;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .leaflet-container {
+            background: #0f172a !important;
+        }
+        .leaflet-tile-pane {
+            filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) grayscale(100%) opacity(0.3);
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.2.3",
+    "react-dom": "https://esm.sh/react-dom@19.2.3",
+    "react-dom/client": "https://esm.sh/react-dom@19.2.3/client",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "lunar-javascript": "https://esm.sh/lunar-javascript@^1.6.12",
+    "leaflet": "https://esm.sh/leaflet@1.9.4",
+    "react-leaflet": "https://esm.sh/react-leaflet@4.2.1?external=react,react-dom,leaflet",
+    "react-dom/": "https://esm.sh/react-dom@19.2.3/",
+    "react/": "https://esm.sh/react@19.2.3/"
+  }
+}
+</script>
+</head>
+<body>
+    <div class="tai-ji-bg animate-mystic-spin">
+        <svg viewBox="0 0 100 100" fill="currentColor">
+            <path d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm0 90c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40z"/>
+            <path d="M50 10c-22.1 0-40 17.9-40 40s17.9 40 40 40V10zM50 25c6.9 0 12.5 5.6 12.5 12.5S56.9 50 50 50s-12.5-5.6-12.5-12.5S43.1 25 50 25zm0 37.5c6.9 0 12.5 5.6 12.5 12.5S56.9 87.5 50 87.5s-12.5-5.6-12.5-12.5S43.1 62.5 50 62.5z"/>
+        </svg>
+    </div>
+    <div id="root"></div>
+</body>
+</html>
